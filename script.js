@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function(){
 			li.innerHTML = `<span class="task-text">${task}</span>
                             <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
                             <button class="edit" onclick="editTask"(${index})">Edit</button>;
-                            <button class="finish" onclick="finishTask"(${index}">Finish<button>"`
+                            <button class="finish" onclick="finishTask"(${index}">Finish<button>`
 			taskList.appendChild(li);
 		});
 	}
@@ -66,15 +66,19 @@ document.addEventListener('DOMContentLoaded', function(){
 
     window.editTask = function(index){
         const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        const updateTask = prompt("Update the task", tasks[index])
-        if (updateTask){
-            tasks[index] = updateTask.trim();
+        const updateTask = prompt("Update the task", tasks[index].text)
+        if (updateTask !== null && updateTask.trim() !== ""){
+            tasks[index].text = updateTask.trim();
             localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 		    loadTasks();
         }
 
     }
 
+    window.finishTask = function(index{
+        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    })
    
 
 
