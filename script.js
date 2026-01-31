@@ -34,7 +34,10 @@ document.addEventListener('DOMContentLoaded', function(){
 		tasks.forEach((task, index) => {
 			const li = document.createElement('li');
 			li.className = 'task-item';
-			li.innerHTML = `<span class="task-text">${task}</span><button class="delete-btn" onclick="deleteTask(${index})">Delete</button>`;
+			li.innerHTML = `<span class="task-text">${task}</span>
+                            <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+                            <button class="edit" onclick="editTask"(${index})">Edit</button>;
+                            <button class="finish" onclick="finishTask"(${index}">Finish<button>"`
 			taskList.appendChild(li);
 		});
 	}
@@ -60,6 +63,21 @@ document.addEventListener('DOMContentLoaded', function(){
 	taskInput.addEventListener('keypress', function(e){
 		if(e.key === 'Enter') addTask();
 	});
+
+    window.editTask = function(index){
+        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        const updateTask = prompt("Update the task", tasks[index])
+        if (updateTask){
+            tasks[index] = updateTask.trim();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+		    loadTasks();
+        }
+
+    }
+
+   
+
+
 
 	loadTasks();
 });
