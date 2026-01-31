@@ -22,9 +22,9 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);backgroun
 .nav-links a:hover{background:rgba(255,255,255,0.12)}
 .nav-links a.active{background:rgba(255,255,255,0.18)}
 .menu-toggle{display:none;background:transparent;border:none;color:#fff;font-size:24px}
-.content{padding:20px}
+.content{padding:20px;display:flex;flex-direction:column;align-items:center}
 .section{display:none}
-.section.show{display:block}
+.section.show{display:block;width:100%;display:flex;flex-direction:column;align-items:center}
 
 @media(max-width:700px){
     .nav-links{position:absolute;left:0;right:0;top:64px;background:var(--primary);padding:10px 20px;display:none}
@@ -32,3 +32,15 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);backgroun
     .nav-links ul{flex-direction:column;gap:8px}
     .menu-toggle{display:block}
 }
+
+/* Task Manager Styles */
+.task-manager{max-width:600px;margin:20px auto;width:100%;padding:0 20px}
+.task-input-group{display:flex;gap:10px;margin-bottom:15px}
+#taskInput{flex:1;padding:10px;border:1px solid #ccc;border-radius:4px;font-size:14px}
+#addTaskBtn{padding:10px 20px;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:14px}
+#addTaskBtn:hover{background:#1975d2}
+.task-list{list-style:none;padding:0;margin:0}
+.task-item{display:flex;justify-content:space-between;align-items:center;padding:12px;margin:8px 0;background:#f5f5f5;border-left:4px solid var(--primary);border-radius:4px}
+.task-text{flex:1;color:var(--text);font-size:14px}
+.delete-btn{padding:6px 12px;background:#ff4444;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px}
+.delete-btn:hover{background:#cc0000}
