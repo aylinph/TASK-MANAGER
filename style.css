@@ -48,4 +48,4 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);backgroun
 .edit-btn:hover{background:#ff9e4}
 .finish-btn{padding:6px 12px;background:#369d1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px}
 .finish-btn:hover{background:#369d1a}
-.task-text.completed {text-decoration: line-through;color: #999;font-style: italic;
+.task-text.completed {text-decoration: line-through;color: #999;font-style: italic}
