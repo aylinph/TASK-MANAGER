@@ -34,7 +34,10 @@ document.addEventListener('DOMContentLoaded', function(){
 		tasks.forEach((task, index) => {
 			const li = document.createElement('li');
 			li.className = 'task-item';
-			li.innerHTML = `<span class="task-text">${task}</span><button class="delete-btn" onclick="deleteTask(${index})">Delete</button>`;
+			li.innerHTML = `<span class="task-text">${task}</span>
+							<button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+							<button class="edit-btn" onclick="editTask(${index})">Edit</button>
+							<button class="finish-btn" onclick="finishTask()`
 			taskList.appendChild(li);
 		});
 	}
@@ -55,6 +58,16 @@ document.addEventListener('DOMContentLoaded', function(){
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 		loadTasks();
 	};
+
+	window.editTask = function(index){
+		const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+		const updatedTask = prompt("Edit your task:", tasks[index]);
+		if(updatedTask !== null && updatedTask.trim() !== ""){
+			tasks[index] = updatedTask.trim();
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+			loadTasks()
+		}
+	}
 
 	addTaskBtn.addEventListener('click', addTask);
 	taskInput.addEventListener('keypress', function(e){
