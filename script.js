@@ -32,21 +32,31 @@ document.addEventListener('DOMContentLoaded', function(){
 		const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 		taskList.innerHTML = '';
 		tasks.forEach((task, index) => {
+
+			if (typeof task === 'string'){
+				task = { text: task, completed: false}
+			}
 			const li = document.createElement('li');
 			li.className = 'task-item';
-			li.innerHTML = `<span class="task-text">${task}</span>
+
+			const textClass = task.completed ? 'task-text completed' : 'task-text';
+			const btnText = task.completed ? 'Completed' : 'Done';
+			const btnClass = task.completed ? 'finish-btn completed' : 'finish-btn';
+
+			li.innerHTML = `<span class="${textClass}">${task.text}</span>
 							<button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
 							<button class="edit-btn" onclick="editTask(${index})">Edit</button>
-							<button class="finish-btn" onclick="finishTask()`
+							<button class="${btnClass}" onclick="finishTask(${index})">${btnText}</button>`
 			taskList.appendChild(li);
 		});
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 	}
 
 	function addTask(){
-		const task = taskInput.value.trim();
-		if(!task) return;
+		const taskValue = taskInput.value.trim();
+		if(!taskValue) return;
 		const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-		tasks.push(task);
+		tasks.push({ text: taskValue, completed: false});
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 		taskInput.value = '';
 		loadTasks();
@@ -67,6 +77,19 @@ document.addEventListener('DOMContentLoaded', function(){
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 			loadTasks()
 		}
+	};
+
+	window.finishTask = function(index){
+		const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+		if(tasks[index]){
+			if(typeof tasks[index] === 'string'){
+				tasks[index] = { text: tasks[index], completed: true };
+			} else {
+				tasks[index].completed = !tasks[index].completed;
+			}
+		}
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+		loadTasks()
 	}
 
 	addTaskBtn.addEventListener('click', addTask);

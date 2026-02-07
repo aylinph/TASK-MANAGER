@@ -46,4 +46,6 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);backgroun
 .delete-btn:hover{background:#cc0000}
 .edit-btn{padding:6px 12px;background:#ff9e44;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px}
 .edit-btn:hover{background:#ff9e4}
-
+.finish-btn{padding:6px 12px;background:#369d1a;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px}
+.finish-btn:hover{background:#369d1a}
+.task-text.completed {text-decoration: line-through;color: #999;font-style: italic;
