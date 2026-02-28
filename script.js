@@ -38,12 +38,6 @@ document.addEventListener('DOMContentLoaded', function(){
 			}
 			const li = document.createElement('li');
 			li.className = 'task-item';
-<<<<<<< HEAD
-			li.innerHTML = `<span class="task-text">${task}</span>
-                            <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
-                            <button class="edit" onclick="editTask"(${index})">Edit</button>;
-                            <button class="finish" onclick="finishTask"(${index}">Finish<button>`
-=======
 
 			const textClass = task.completed ? 'task-text completed' : 'task-text';
 			const btnText = task.completed ? 'Completed' : 'Done';
@@ -53,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function(){
 							<button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
 							<button class="edit-btn" onclick="editTask(${index})">Edit</button>
 							<button class="${btnClass}" onclick="finishTask(${index})">${btnText}</button>`
->>>>>>> fix2
 			taskList.appendChild(li);
 		});
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -103,25 +96,6 @@ document.addEventListener('DOMContentLoaded', function(){
 	taskInput.addEventListener('keypress', function(e){
 		if(e.key === 'Enter') addTask();
 	});
-
-    window.editTask = function(index){
-        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        const updateTask = prompt("Update the task", tasks[index].text)
-        if (updateTask !== null && updateTask.trim() !== ""){
-            tasks[index].text = updateTask.trim();
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-		    loadTasks();
-        }
-
-    }
-
-    window.finishTask = function(index{
-        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
-    })
-   
-
-
 
 	loadTasks();
 });
