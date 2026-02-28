@@ -32,21 +32,38 @@ document.addEventListener('DOMContentLoaded', function(){
 		const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 		taskList.innerHTML = '';
 		tasks.forEach((task, index) => {
+
+			if (typeof task === 'string'){
+				task = { text: task, completed: false}
+			}
 			const li = document.createElement('li');
 			li.className = 'task-item';
+<<<<<<< HEAD
 			li.innerHTML = `<span class="task-text">${task}</span>
                             <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
                             <button class="edit" onclick="editTask"(${index})">Edit</button>;
                             <button class="finish" onclick="finishTask"(${index}">Finish<button>`
+=======
+
+			const textClass = task.completed ? 'task-text completed' : 'task-text';
+			const btnText = task.completed ? 'Completed' : 'Done';
+			const btnClass = task.completed ? 'finish-btn completed' : 'finish-btn';
+
+			li.innerHTML = `<span class="${textClass}">${task.text}</span>
+							<button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+							<button class="edit-btn" onclick="editTask(${index})">Edit</button>
+							<button class="${btnClass}" onclick="finishTask(${index})">${btnText}</button>`
+>>>>>>> fix2
 			taskList.appendChild(li);
 		});
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 	}
 
 	function addTask(){
-		const task = taskInput.value.trim();
-		if(!task) return;
+		const taskValue = taskInput.value.trim();
+		if(!taskValue) return;
 		const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-		tasks.push(task);
+		tasks.push({ text: taskValue, completed: false});
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 		taskInput.value = '';
 		loadTasks();
@@ -58,6 +75,29 @@ document.addEventListener('DOMContentLoaded', function(){
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 		loadTasks();
 	};
+
+	window.editTask = function(index){
+		const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+		const updatedTask = prompt("Edit your task:", tasks[index]);
+		if(updatedTask !== null && updatedTask.trim() !== ""){
+			tasks[index] = updatedTask.trim();
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+			loadTasks()
+		}
+	};
+
+	window.finishTask = function(index){
+		const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+		if(tasks[index]){
+			if(typeof tasks[index] === 'string'){
+				tasks[index] = { text: tasks[index], completed: true };
+			} else {
+				tasks[index].completed = !tasks[index].completed;
+			}
+		}
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+		loadTasks()
+	}
 
 	addTaskBtn.addEventListener('click', addTask);
 	taskInput.addEventListener('keypress', function(e){
