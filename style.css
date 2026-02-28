@@ -45,56 +45,5 @@ body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);backgroun
 .delete-btn{padding:6px 12px;background:#ff4444;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px}
 .delete-btn:hover{background:#cc0000}
 .edit-btn{padding:6px 12px;background:#ff9e44;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px}
-.edit-btn:hover{background:#ff7c2c}
+.edit-btn:hover{background:#ff9e4}
 
-
-/* HERO SECTION */
-.hero {
-    min-height: calc(100vh - 80px);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 2rem 6rem;
-    gap: 4rem;
-}
-
-.hero-content {
-    max-width: 520px;
-}
-
-.hero-content h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    line-height: 1.15;
-    margin-bottom: 1.5rem;
-    color: #0f172a;
-}
-
-.hero-content p {
-    font-size: 1.125rem;
-    color: #475569;
-    line-height: 1.6;
-}
-
-.hero-image img {
-    max-width: 380px;
-    width: 100%;
-    height: auto;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-    .hero {
-        flex-direction: column;
-        text-align: center;
-        padding: 3rem 2rem;
-    }
-
-    .hero-content h1 {
-        font-size: 2.3rem;
-    }
-
-    .hero-image img {
-        max-width: 300px;
-    }
-}
