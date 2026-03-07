@@ -4,6 +4,14 @@ document.addEventListener('DOMContentLoaded', function(){
    const menuToggle = document.querySelector('.menu-toggle');
    const navLinks = document.querySelector('.nav-links');
 
+   const getStartedBtn = document.getElementById('getStartedBtn');
+   if (getStartedBtn) {
+    getStartedBtn.addEventListener('click', function(){
+        showSection('services');
+    });
+   }
+
+   
 
    function showSection(id){
        sections.forEach(s=> s.classList.toggle('show', s.id === id));
@@ -36,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function(){
    function loadTasks(){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
        taskList.innerHTML = '';
+       let activeCounter = 1;
        tasks.forEach((task, index) => {
 
 
@@ -50,8 +59,13 @@ document.addEventListener('DOMContentLoaded', function(){
            const btnText = task.completed ? 'Completed' : 'Done';
            const btnClass = task.completed ? 'finish-btn completed' : 'finish-btn';
 
+           let numberPrefix = '';
+           if (!task.completed){
+            numberPrefix = `${activeCounter}. `;
+            activeCounter++;
+           }
 
-           li.innerHTML = `<span class="${textClass}">${task.text}</span>
+           li.innerHTML = `<span class="${textClass}">${numberPrefix}${task.text}</span>
                            <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
                            <button class="edit-btn" onclick="editTask(${index})">Edit</button>
                            <button class="${btnClass}" onclick="finishTask(${index})">${btnText}</button>`
@@ -82,11 +96,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
    window.editTask = function(index){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-       const updatedTask = prompt("Edit your task:", tasks[index]);
+       const currentText = typeof tasks[index] === 'string' ? tasks[index] : tasks[index].text;
+       const updatedTask = prompt("Edit your task:", currentText);
        if(updatedTask !== null && updatedTask.trim() !== ""){
-           tasks[index] = updatedTask.trim();
+           tasks[index] = { text: updatedTask.trim(), completed: tasks[index].completed || false };
            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-           loadTasks()
+           loadTasks();
        }
    };
 
@@ -112,6 +127,15 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
    loadTasks();
+
+   const contactForm = document.getElementById('contactForm')
+   if (contactForm) {
+    contactForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        contactForm.reset();
+        alert("Thank you for reaching out! Your message has been sent successfully.");
+    })
+   }
 });
 
 
