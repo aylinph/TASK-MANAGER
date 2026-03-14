@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
    /* Task Manager */
    const taskInput = document.getElementById('taskInput');
+   const assigneeInput = document.getElementById('assigneeInput');
    const addTaskBtn = document.getElementById('addTaskBtn');
    const taskList = document.getElementById('taskList');
    const STORAGE_KEY = 'tasks';
@@ -65,7 +66,12 @@ document.addEventListener('DOMContentLoaded', function(){
             activeCounter++;
            }
 
-           li.innerHTML = `<span class="${textClass}">${numberPrefix}${task.text}</span>
+           let assigneeHtml = '';
+           if(task.assignee) {
+            assigneeHtml = `<span class="assignee-badge">👤 ${task.assignee}</span>`;
+           }
+
+           li.innerHTML = `<span class="${textClass}">${numberPrefix}${task.text}${assigneeHtml}</span>
                            <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
                            <button class="edit-btn" onclick="editTask(${index})">Edit</button>
                            <button class="${btnClass}" onclick="finishTask(${index})">${btnText}</button>`
@@ -77,11 +83,13 @@ document.addEventListener('DOMContentLoaded', function(){
 
    function addTask(){
        const taskValue = taskInput.value.trim();
+       const assigneeValue = assigneeInput.value.trim();
        if(!taskValue) return;
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-       tasks.push({ text: taskValue, completed: false});
+       tasks.push({ text: taskValue, completed: false, assignee: assigneeValue});
        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
        taskInput.value = '';
+       assigneeInput.value = '';
        loadTasks();
    }
 
@@ -97,11 +105,15 @@ document.addEventListener('DOMContentLoaded', function(){
    window.editTask = function(index){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
        const currentText = typeof tasks[index] === 'string' ? tasks[index] : tasks[index].text;
+       const currentAssignee = currentText.assignee || '';
        const updatedTask = prompt("Edit your task:", currentText);
+       
        if(updatedTask !== null && updatedTask.trim() !== ""){
-           tasks[index] = { text: updatedTask.trim(), completed: tasks[index].completed || false };
-           localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-           loadTasks();
+        const updatedAssignee = prompt("Edit the person responsible:", currentAssignee);
+
+        tasks[index] = { text: updatedTask.trim(), completed: tasks[index].completed || false, assignee: updatedAssignee !== null ? updatedAssignee.trim() : currentAssignee };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+        loadTasks();
        }
    };
 
@@ -110,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function(){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
        if(tasks[index]){
            if(typeof tasks[index] === 'string'){
-               tasks[index] = { text: tasks[index], completed: true };
+               tasks[index] = { text: tasks[index], completed: true, assignee: '' };
            } else {
                tasks[index].completed = !tasks[index].completed;
            }
@@ -124,6 +136,9 @@ document.addEventListener('DOMContentLoaded', function(){
    taskInput.addEventListener('keypress', function(e){
        if(e.key === 'Enter') addTask();
    });
+   assigneeInput.addEventListener('keypress', function(e){
+    if(e.key == 'Enter') addTask();
+   })
 
 
    loadTasks();

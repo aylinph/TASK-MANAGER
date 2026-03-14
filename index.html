@@ -30,41 +30,67 @@
 
    <main class="content">
        <section id="home" class="section show">
-           <h2>Home</h2>
-           <p>Welcome to Task Tracker.</p>
-           <button id="getStartedBtn" class="hero-btn">Get Started</button>
+        <div class="hero-content">
+            <h2>Master Your Day with Task Tracker</h2>
+            <p>Your simple, distraction-free environment to capture goals, manage tasks, and get things done.</p>
+            <button id="getStartedBtn" class="hero-btn">Get Started</button>
+        </div>
+        <div class="features-container">
+            <div class="feature-box">
+                <h3>Simple Logging</h3>
+                <p>Quicly add new tasks and edit them on the fly without any clutter.</p>
+            </div>
+            <div class="feature-box">
+                <h3>Local Storage</h3>
+                <p>Your tasks are saved securely in your browser. Pick up right where you left off</p>
+            </div>
+            <div class="feature-box">
+                <h3>Stay Focused</h3>
+                <p>Check off completed tasks to turn overwhelming chaos into manageable steps.</p>
+            </div>
+        </div>
        </section>
        <section id="about" class="section">
-           <h3>About Us</h3>
-           <div class="about-container">
-                <img src="image.png" alt="Task Manager" class="about-photo">
+           <div class="about-wrapper">
+            <div class="about-card creator card">
+                <img src="image.png" alt="Khánh Linh" class="about-photo">
                 <div class="about-text">
-                    <p>We help you manage tasks simply.</p>
-                    <p>Hi, I'm Khánh Linh a dedicated  highschool student with a passion
-                        for programming. I'm currently taking courses at Algorithmics International Coding School,
-                        where I'm buliding multiple projects like web applications, 3D games and so on.
-                        Task manager is my creation to help people stay organized.
-                    </p>
+                    <h3>Creator</h3>
+                    <p>Hi, I'm <strong>Khánh Linh</strong>, a dedicated high school student with a passion for programming.</p>
+                    <p>I'm currently taking courses at Algorithmics International Coding School, where I'm building multiple projects like web applications, 3D games, and more. I created Task Tracker to  help people manage their daily lives simply and stay organized.</p>
                 </div>
+            </div>
+            <div class="app-info-header">
+                   <h3>About Task Tracker</h3>
+               </div>
+               
+               <div class="app-features-grid">
+                   <div class="grid-card">
+                       <div class="icon">🎯</div>
+                       <h4>What it does</h4>
+                       <p>A lightweight tool to capture your daily goals. Quickly add new tasks, edit them on the fly, and check them off when done.</p>
+                   </div>
+                   
+                   <div class="grid-card">
+                       <div class="icon">👤</div>
+                       <h4>Who it is for</h4>
+                       <p>Whether you're a student, a professional, or managing chores, this app provides a clear, focused environment to get things done.</p>
+                   </div>
+                   
+                   <div class="grid-card">
+                       <div class="icon">❤️</div>
+                       <h4>Why you'll love it</h4>
+                       <p>Enjoy a distraction-free interface where your tasks are saved instantly to your browser. Turn chaos into actionable steps.</p>
+                   </div>
+               </div>
            </div>
-                <div class="app-info">
-                    <h3>About Task Tracker</h3>
-                    <p><strong>What is does:</strong> Task Tracler is a lightweight, easy-to-use tool designed to help you capture your daily goals. You can quickly add new tasks, edit them on the fly, and check them off when you are done.</p>
-                    <p><strong>Who it is for?:</strong> Whether you're managing homework assignments, a professional organizing projects, or just someone trying to remember their daily chores, this app provides a clear, focused environment to get things done.</p>
-
-                    <h4>Why you will love using it:</h4>
-                    <ul>
-                        <li><strong>Simplicity:</strong>A clean, distraction-free interface that lets you focus on your actual work.</li>
-                        <li><strong>Instant Access:</strong>Your tasks are saved directly in your browser, meaning everything is right where you left it the next time you open the app.</li>
-                        <li><strong>Efficiency:</strong>Turn overwhelming chaos into manageable, actionable steps with just a few clicks.</li>
-                    </ul>
-                </div>
        </section>
        <section id="services" class="section">
            <h2>Services - Task Manager</h2>
            <div class="task-manager">
                <div class="task-input-group">
                    <input type="text" id="taskInput" placeholder="Enter a new task..." />
+                   <input type="text" id="assigneeInput" placeholder="Who is doing this?" />
                    <button id="addTaskBtn">Add Task</button>
                </div>
                <ul id="taskList" class="task-list"></ul>
