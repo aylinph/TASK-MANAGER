@@ -289,14 +289,14 @@ document.addEventListener('DOMContentLoaded', function(){
            
            let btnHtml = '';
            if(t.status === 'todo') {
-               btnHtml = `<button class="k-btn-start" onclick="moveKanban(${i}, 'progress')">Start ➡️</button>`;
+               btnHtml = `<button class="k-btn-start" onclick="moveKanban(${i}, 'progress')">Start</button>`;
            } else if(t.status === 'progress') {
                btnHtml = `
-                   <button class="k-btn-back" onclick="moveKanban(${i}, 'todo')">⬅️ Back</button>
-                   <button class="k-btn-done" onclick="moveKanban(${i}, 'done')">Done ➡️</button>
+                   <button class="k-btn-back" onclick="moveKanban(${i}, 'todo')">Back</button>
+                   <button class="k-btn-done" onclick="moveKanban(${i}, 'done')">Done</button>
                `;
            } else if(t.status === 'done') {
-               btnHtml = `<button class="k-btn-undo" onclick="moveKanban(${i}, 'progress')">⬅️ Undo</button>`;
+               btnHtml = `<button class="k-btn-undo" onclick="moveKanban(${i}, 'progress')">Undo</button>`;
            }
 
            div.innerHTML = `
