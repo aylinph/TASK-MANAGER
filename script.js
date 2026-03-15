@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function(){
-
    const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
    const currentTheme = localStorage.getItem('theme');
    const modeLabel = document.getElementById('mode-label');
@@ -21,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function(){
            document.body.classList.remove('dark-mode');
            localStorage.setItem('theme', 'light');
            if(modeLabel) modeLabel.textContent = "Dark Mode";
-       }    
+       }
    }
 
-   toggleSwitch.addEventListener('change', switchTheme, false);
+   if(toggleSwitch) toggleSwitch.addEventListener('change', switchTheme, false);
 
    const links = document.querySelectorAll('.nav-links a');
    const sections = document.querySelectorAll('.section');
@@ -52,28 +51,52 @@ document.addEventListener('DOMContentLoaded', function(){
        });
    });
 
-   menuToggle.addEventListener('click', function(){
-       navLinks.classList.toggle('open');
-   });
+   if(menuToggle){
+       menuToggle.addEventListener('click', function(){
+           navLinks.classList.toggle('open');
+       });
+   }
 
+   function showToast(message) {
+       const toast = document.getElementById('toast');
+       if(!toast) return;
+       toast.textContent = message;
+       toast.classList.add('show');
+       setTimeout(() => toast.classList.remove('show'), 3000);
+   }
+
+   const STORAGE_KEY = 'tasks';
    const taskInput = document.getElementById('taskInput');
    const assigneeInput = document.getElementById('assigneeInput');
    const deadlineInput = document.getElementById('deadlineInput');
+   const taskColor = document.getElementById('taskColor');
    const addTaskBtn = document.getElementById('addTaskBtn');
    const taskList = document.getElementById('taskList');
-   const STORAGE_KEY = 'tasks';
-   
+
+   function updateProgress() {
+       const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+       const total = tasks.length;
+       const completed = tasks.filter(t => t.completed).length;
+       const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+       const bar = document.getElementById('progressBar');
+       const label = document.getElementById('progressPercent');
+
+       if(bar) bar.style.width = percent + '%';
+       if(label) label.textContent = percent + '%';
+   }
+
    let currentMonth = new Date().getMonth();
    let currentYear = new Date().getFullYear();
 
    function renderCalendar() {
        const calendarDays = document.getElementById('calendarDays');
        const monthYear = document.getElementById('monthYear');
-       
+
        if (!calendarDays || !monthYear) return;
 
        calendarDays.innerHTML = '';
-       
+
        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
        monthYear.innerText = `${months[currentMonth]} ${currentYear}`;
 
@@ -84,41 +107,54 @@ document.addEventListener('DOMContentLoaded', function(){
 
        for (let i = 0; i < firstDay; i++) {
            const emptyDiv = document.createElement('div');
-           emptyDiv.classList.add('calendar-day', 'empty');
+           emptyDiv.className = 'calendar-day empty';
            calendarDays.appendChild(emptyDiv);
        }
 
+       const todayDate = new Date();
+
        for (let i = 1; i <= daysInMonth; i++) {
            const dayDiv = document.createElement('div');
-           dayDiv.classList.add('calendar-day');
+           dayDiv.className = 'calendar-day';
            dayDiv.innerText = i;
 
-           const today = new Date();
-           if (i === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+           const dayTasks = tasks.filter(t => {
+               if (!t.deadline) return false;
+               const p = t.deadline.split('-');
+               if (p.length !== 3) return false;
+               return parseInt(p[0], 10) === currentYear && 
+                      parseInt(p[1], 10) === currentMonth + 1 && 
+                      parseInt(p[2], 10) === i;
+           });
+
+           if (i === todayDate.getDate() && currentMonth === todayDate.getMonth() && currentYear === todayDate.getFullYear()) {
                dayDiv.classList.add('today');
            }
 
-           const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-           const dayTasks = tasks.filter(t => t.deadline === dateString);
-
            if (dayTasks.length > 0) {
                dayDiv.classList.add('has-task');
-               
+
+               const markerCont = document.createElement('div');
+               markerCont.className = 'calendar-markers';
+               dayTasks.slice(0, 3).forEach(t => {
+                   const dot = document.createElement('div');
+                   dot.className = 'marker';
+                   dot.style.backgroundColor = t.color || 'var(--primary)';
+                   markerCont.appendChild(dot);
+               });
+               dayDiv.appendChild(markerCont);
+
                const tooltip = document.createElement('div');
-               tooltip.classList.add('calendar-tooltip');
-               
+               tooltip.className = 'calendar-tooltip';
+
                let htmlContent = '';
                dayTasks.forEach(t => {
                    const taskStyle = t.completed ? 'text-decoration: line-through; color: var(--text-light);' : 'font-weight: 600; color: var(--text);';
-                   const assigneeHtml = t.assignee ? `<div class="tooltip-assignee">👤 ${t.assignee}</div>` : '';
-                   htmlContent += `
-                       <div class="tooltip-task">
-                           <div style="${taskStyle}">${t.text}</div>
-                           ${assigneeHtml}
-                       </div>
-                   `;
+                   const assigneeHtml = t.assignee ? `<div class="tooltip-assignee">${t.assignee}</div>` : '';
+                   const borderColor = t.color || 'var(--primary)';
+                   htmlContent += `<div class="tooltip-task" style="border-left: 3px solid ${borderColor};"><div style="${taskStyle}">${t.text}</div>${assigneeHtml}</div>`;
                });
-               
+
                tooltip.innerHTML = htmlContent;
                dayDiv.appendChild(tooltip);
            }
@@ -130,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function(){
    const prevMonthBtn = document.getElementById('prevMonth');
    const nextMonthBtn = document.getElementById('nextMonth');
 
-   if(prevMonthBtn && nextMonthBtn) {
+   if(prevMonthBtn) {
        prevMonthBtn.addEventListener('click', () => {
            currentMonth--;
            if (currentMonth < 0) {
@@ -139,7 +175,9 @@ document.addEventListener('DOMContentLoaded', function(){
            }
            renderCalendar();
        });
+   }
 
+   if(nextMonthBtn) {
        nextMonthBtn.addEventListener('click', () => {
            currentMonth++;
            if (currentMonth > 11) {
@@ -152,32 +190,29 @@ document.addEventListener('DOMContentLoaded', function(){
 
    function loadTasks(){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+       if(!taskList) return;
+
        taskList.innerHTML = '';
-       let activeCounter = 1;
 
        if (tasks.length === 0) {
-           taskList.innerHTML = '<li class="empty-state">🎉 You\'re all caught up! Enjoy your day!</li>';
+           taskList.innerHTML = '<li class="empty-state">You are all caught up. Enjoy your day.</li>';
            renderCalendar();
+           updateProgress();
            return;
        }
-       
+
        tasks.forEach((task, index) => {
            if (typeof task === 'string'){
-               task = { text: task, completed: false, assignee: '', deadline: '' }
+               task = { text: task, completed: false, assignee: '', deadline: '', color: '#FACC15' };
            }
-           
+
            const li = document.createElement('li');
            li.className = 'task-item';
+           li.style.borderLeft = `5px solid ${task.color || 'var(--primary)'}`;
 
            const textClass = task.completed ? 'task-text completed' : 'task-text';
            const btnText = task.completed ? 'Completed' : 'Done';
            const btnClass = task.completed ? 'finish-btn completed' : 'finish-btn';
-
-           let numberPrefix = '';
-           if (!task.completed){
-            numberPrefix = `${activeCounter}. `;
-            activeCounter++;
-           }
 
            let assigneeHtml = '';
            if (task.assignee) {
@@ -189,39 +224,51 @@ document.addEventListener('DOMContentLoaded', function(){
                deadlineHtml = `<span class="deadline-badge">Due: ${task.deadline}</span>`;
            }
 
-           li.innerHTML = `<span class="${textClass}">${numberPrefix}${task.text} ${assigneeHtml} ${deadlineHtml}</span>
+           li.innerHTML = `<span class="${textClass}">${task.text} ${assigneeHtml} ${deadlineHtml}</span>
                            <div>
                                <button class="edit-btn" onclick="editTask(${index})">Edit</button>
                                <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
                                <button class="${btnClass}" onclick="finishTask(${index})">${btnText}</button>
-                           </div>`
+                           </div>`;
+
            taskList.appendChild(li);
        });
+
        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
        renderCalendar();
+       updateProgress();
    }
 
    function addTask(){
+       if(!taskInput) return;
        const taskValue = taskInput.value.trim();
-       const assigneeValue = assigneeInput.value.trim(); 
-       const deadlineValue = deadlineInput ? deadlineInput.value : ''; 
        
-       if(!taskValue) return; 
-       
+       if(!taskValue) {
+           showToast("Please enter a task.");
+           return;
+       }
+
+       const assigneeValue = assigneeInput ? assigneeInput.value.trim() : '';
+       const deadlineValue = deadlineInput ? deadlineInput.value : '';
+       const colorValue = taskColor ? taskColor.value : '#FACC15';
+
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-       
-       tasks.push({ 
-           text: taskValue, 
-           completed: false, 
-           assignee: assigneeValue, 
-           deadline: deadlineValue 
+
+       tasks.push({
+           text: taskValue,
+           completed: false,
+           assignee: assigneeValue,
+           deadline: deadlineValue,
+           color: colorValue
        });
-       
+
        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-       
+
        taskInput.value = '';
-       assigneeInput.value = '';
+       if(assigneeInput) assigneeInput.value = '';
        if(deadlineInput) deadlineInput.value = '';
+
+       showToast("Task added successfully.");
        loadTasks();
    }
 
@@ -233,18 +280,20 @@ document.addEventListener('DOMContentLoaded', function(){
        const currentDeadline = currentTask.deadline || '';
 
        const updatedTask = prompt("Edit your task:", currentText);
-       
+
        if(updatedTask !== null && updatedTask.trim() !== ""){
            const updatedAssignee = prompt("Edit the person responsible:", currentAssignee);
            const updatedDeadline = prompt("Edit the deadline (YYYY-MM-DD):", currentDeadline);
-           
-           tasks[index] = { 
-               text: updatedTask.trim(), 
+
+           tasks[index] = {
+               text: updatedTask.trim(),
                completed: currentTask.completed || false,
                assignee: updatedAssignee !== null ? updatedAssignee.trim() : currentAssignee,
-               deadline: updatedDeadline !== null ? updatedDeadline.trim() : currentDeadline
+               deadline: updatedDeadline !== null ? updatedDeadline.trim() : currentDeadline,
+               color: currentTask.color || '#FACC15'
            };
            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+           showToast("Task updated.");
            loadTasks();
        }
    };
@@ -253,19 +302,21 @@ document.addEventListener('DOMContentLoaded', function(){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
        tasks.splice(index, 1);
        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+       showToast("Task deleted.");
        loadTasks();
-   };
+   }
 
    window.finishTask = function(index){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
        if(tasks[index]){
            if(typeof tasks[index] === 'string'){
-               tasks[index] = { text: tasks[index], completed: true, assignee: '', deadline: '' };
+               tasks[index] = { text: tasks[index], completed: true, assignee: '', deadline: '', color: '#FACC15' };
            } else {
                tasks[index].completed = !tasks[index].completed;
            }
        }
        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+       if(tasks[index].completed) showToast("Task completed.");
        loadTasks();
    }
 
@@ -278,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function(){
        const todo = document.getElementById('kanban-todo');
        const progress = document.getElementById('kanban-progress');
        const done = document.getElementById('kanban-done');
-       
+
        if(todo) todo.innerHTML = '';
        if(progress) progress.innerHTML = '';
        if(done) done.innerHTML = '';
@@ -286,27 +337,23 @@ document.addEventListener('DOMContentLoaded', function(){
        kTasks.forEach((t, i) => {
            const div = document.createElement('div');
            div.className = 'kanban-item';
-           
+
            let btnHtml = '';
            if(t.status === 'todo') {
                btnHtml = `<button class="k-btn-start" onclick="moveKanban(${i}, 'progress')">Start</button>`;
            } else if(t.status === 'progress') {
-               btnHtml = `
-                   <button class="k-btn-back" onclick="moveKanban(${i}, 'todo')">Back</button>
-                   <button class="k-btn-done" onclick="moveKanban(${i}, 'done')">Done</button>
-               `;
+               btnHtml = `<button class="k-btn-back" onclick="moveKanban(${i}, 'todo')">Back</button>
+                          <button class="k-btn-done" onclick="moveKanban(${i}, 'done')">Done</button>`;
            } else if(t.status === 'done') {
                btnHtml = `<button class="k-btn-undo" onclick="moveKanban(${i}, 'progress')">Undo</button>`;
            }
 
-           div.innerHTML = `
-               <span>${t.text}</span>
-               <div class="k-actions">
-                   ${btnHtml}
-                   <button class="k-delete" onclick="deleteKanban(${i})">✖</button>
-               </div>
-           `;
-           
+           div.innerHTML = `<span>${t.text}</span>
+                            <div class="k-actions">
+                                ${btnHtml}
+                                <button class="k-delete" onclick="deleteKanban(${i})">✖</button>
+                            </div>`;
+
            if(t.status === 'todo' && todo) todo.appendChild(div);
            if(t.status === 'progress' && progress) progress.appendChild(div);
            if(t.status === 'done' && done) done.appendChild(div);
@@ -314,12 +361,17 @@ document.addEventListener('DOMContentLoaded', function(){
    }
 
    function addKanbanTask() {
+       if(!kanbanInput) return;
        const val = kanbanInput.value.trim();
-       if(!val) return;
+       if(!val) {
+           showToast("Please enter a project task.");
+           return;
+       }
        const kTasks = JSON.parse(localStorage.getItem(KANBAN_KEY)) || [];
        kTasks.push({ text: val, status: 'todo' });
        localStorage.setItem(KANBAN_KEY, JSON.stringify(kTasks));
        kanbanInput.value = '';
+       showToast("Added to Kanban board.");
        loadKanban();
    }
 
@@ -334,6 +386,7 @@ document.addEventListener('DOMContentLoaded', function(){
        const kTasks = JSON.parse(localStorage.getItem(KANBAN_KEY)) || [];
        kTasks.splice(index, 1);
        localStorage.setItem(KANBAN_KEY, JSON.stringify(kTasks));
+       showToast("Kanban task deleted.");
        loadKanban();
    }
 
@@ -352,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function(){
        const habits = JSON.parse(localStorage.getItem(HABIT_KEY)) || [];
        const habitList = document.getElementById('habitList');
        if(!habitList) return;
-       
+
        habitList.innerHTML = '';
        const today = new Date().toISOString().split('T')[0];
 
@@ -360,37 +413,40 @@ document.addEventListener('DOMContentLoaded', function(){
            const isDoneToday = h.lastDone === today;
            const li = document.createElement('li');
            li.className = 'habit-item';
-           
-           li.innerHTML = `
-               <div class="habit-info">
-                   <div class="habit-name">${h.name}</div>
-                   <div class="streak-badge">🔥 ${h.streak}</div>
-               </div>
-               <div class="habit-actions">
-                   <button class="habit-check" onclick="checkHabit(${i})" ${isDoneToday ? 'disabled' : ''}>
-                       ${isDoneToday ? '✓ Done' : 'Check In'}
-                   </button>
-                   <button class="habit-delete" onclick="deleteHabit(${i})">✖</button>
-               </div>
-           `;
+
+           li.innerHTML = `<div class="habit-info">
+                               <div class="habit-name">${h.name}</div>
+                               <div class="streak-badge">Streak: ${h.streak}</div>
+                           </div>
+                           <div class="habit-actions">
+                               <button class="habit-check" onclick="checkHabit(${i})" ${isDoneToday ? 'disabled' : ''}>
+                                   ${isDoneToday ? 'Done' : 'Check In'}
+                               </button>
+                               <button class="habit-delete" onclick="deleteHabit(${i})">✖</button>
+                           </div>`;
            habitList.appendChild(li);
        });
    }
 
    function addHabit() {
+       if(!habitInput) return;
        const val = habitInput.value.trim();
-       if(!val) return;
+       if(!val) {
+           showToast("Please enter a habit.");
+           return;
+       }
        const habits = JSON.parse(localStorage.getItem(HABIT_KEY)) || [];
        habits.push({ name: val, streak: 0, lastDone: '' });
        localStorage.setItem(HABIT_KEY, JSON.stringify(habits));
        habitInput.value = '';
+       showToast("Habit created.");
        loadHabits();
    }
 
    window.checkHabit = function(index) {
        const habits = JSON.parse(localStorage.getItem(HABIT_KEY)) || [];
        const today = new Date().toISOString().split('T')[0];
-       
+
        if(habits[index].lastDone === today) return;
 
        let yest = new Date();
@@ -402,9 +458,10 @@ document.addEventListener('DOMContentLoaded', function(){
        } else {
            habits[index].streak = 1;
        }
-       
+
        habits[index].lastDone = today;
        localStorage.setItem(HABIT_KEY, JSON.stringify(habits));
+       showToast("Streak updated.");
        loadHabits();
    }
 
@@ -412,6 +469,7 @@ document.addEventListener('DOMContentLoaded', function(){
        const habits = JSON.parse(localStorage.getItem(HABIT_KEY)) || [];
        habits.splice(index, 1);
        localStorage.setItem(HABIT_KEY, JSON.stringify(habits));
+       showToast("Habit deleted.");
        loadHabits();
    }
 
@@ -428,7 +486,7 @@ document.addEventListener('DOMContentLoaded', function(){
    };
 
    if(addTaskBtn) addTaskBtn.addEventListener('click', addTask);
-   
+
    if(taskInput) {
        taskInput.addEventListener('keypress', function(e){
            if(e.key === 'Enter') addTask();
@@ -445,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function(){
        contactForm.addEventListener('submit', function(e){
            e.preventDefault();
            contactForm.reset();
-           alert("Thank you for reaching out! Your message has been sent successfully.");
+           showToast("Thank you. Message sent.");
        });
    }
 

@@ -91,54 +91,72 @@
 
        <section id="services" class="section">
            <div class="app-info-header">
-               <h2>Your Workspace</h2>
+               <h2>Your Control Center</h2>
            </div>
 
-           <div class="workspace-grid">
-               <div class="workspace-card">
-                   <div class="card-header" onclick="toggleModule('taskManagerUI')">
-                       <h3>Task Manager</h3>
-                       <span class="toggle-icon">+</span>
-                   </div>
-                   <div class="card-content" id="taskManagerUI">
-                       <div class="task-manager">
-                           <div class="task-input-group">
-                               <input type="text" id="taskInput" placeholder="Enter a new task..." />
-                               <input type="text" id="assigneeInput" placeholder="Who?" />
-                               <input type="date" id="deadlineInput" title="Set a deadline" />
-                               <button id="addTaskBtn">Add</button>
-                           </div>
-                           <ul id="taskList" class="task-list"></ul>
+           <div class="combined-workspace">
+               <div class="workspace-column main-tasks">
+                   <div class="workspace-card">
+                       <div class="card-header" onclick="toggleModule('taskManagerUI')">
+                           <h3>Task Manager</h3>
+                           <span class="toggle-icon">+</span>
                        </div>
-                   </div>
-               </div>
-
-               <div class="workspace-card">
-                   <div class="card-header" onclick="toggleModule('calendarUI')">
-                       <h3>Calendar</h3>
-                       <span class="toggle-icon">+</span>
-                   </div>
-                   <div class="card-content" id="calendarUI">
-                       <div class="calendar-container">
-                           <div class="calendar-header">
-                               <button id="prevMonth">&lt;</button>
-                               <h4 id="monthYear"></h4>
-                               <button id="nextMonth">&gt;</button>
-                           </div>
-                           <div class="calendar-grid">
-                               <div class="day-name">Sun</div>
-                               <div class="day-name">Mon</div>
-                               <div class="day-name">Tue</div>
-                               <div class="day-name">Wed</div>
-                               <div class="day-name">Thu</div>
-                               <div class="day-name">Fri</div>
-                               <div class="day-name">Sat</div>
-                               <div id="calendarDays" class="calendar-days"></div>
+                       <div class="card-content open" id="taskManagerUI">
+                           <div class="task-manager">
+                               <div class="progress-container">
+                                   <div class="progress-label">Task Progress: <span id="progressPercent">0%</span></div>
+                                   <div class="progress-bar-bg">
+                                       <div id="progressBar" class="progress-bar-fill"></div>
+                                   </div>
+                               </div>
+                               <div class="task-input-group">
+                                   <input type="text" id="taskInput" placeholder="Enter a new task..." />
+                                   <input type="text" id="assigneeInput" placeholder="Who?" />
+                                   <div class="input-row-bottom">
+                                       <input type="date" id="deadlineInput" title="Set a deadline" />
+                                       <div class="color-picker-wrapper">
+                                           <label>Priority:</label>
+                                           <input type="color" id="taskColor" value="#FACC15">
+                                       </div>
+                                       <button id="addTaskBtn">Add</button>
+                                   </div>
+                               </div>
+                               <ul id="taskList" class="task-list"></ul>
                            </div>
                        </div>
                    </div>
                </div>
 
+               <div class="workspace-column side-panel">
+                   <div class="workspace-card">
+                       <div class="card-header" onclick="toggleModule('calendarUI')">
+                           <h3>Calendar</h3>
+                           <span class="toggle-icon">+</span>
+                       </div>
+                       <div class="card-content open" id="calendarUI">
+                           <div class="calendar-container">
+                               <div class="calendar-header">
+                                   <button id="prevMonth">&lt;</button>
+                                   <h4 id="monthYear"></h4>
+                                   <button id="nextMonth">&gt;</button>
+                               </div>
+                               <div class="calendar-grid">
+                                   <div class="day-name">S</div>
+                                   <div class="day-name">M</div>
+                                   <div class="day-name">T</div>
+                                   <div class="day-name">W</div>
+                                   <div class="day-name">T</div>
+                                   <div class="day-name">F</div>
+                                   <div class="day-name">S</div>
+                                   <div id="calendarDays" class="calendar-days"></div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+
+           <div class="bottom-modules">
                <div class="workspace-card">
                    <div class="card-header" onclick="toggleModule('kanbanUI')">
                        <h3>Kanban Board</h3>
@@ -214,6 +232,7 @@
    </main>
 
    <script src="script.js"></script>
+   <div id="toast" class="toast"></div>
    <div class="theme-switch-wrapper">
        <label class="theme-switch" for="checkbox">
            <input type="checkbox" id="checkbox" />
