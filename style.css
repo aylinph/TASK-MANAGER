@@ -54,7 +54,8 @@ body {
 }
 
 body.dark-mode .hero-content h2,
-body.dark-mode .app-info-header h3 {
+body.dark-mode .app-info-header h3,
+body.dark-mode .modal-content h3 {
     text-shadow: 0 0 12px rgba(250, 204, 21, 0.4);
 }
 
@@ -359,22 +360,37 @@ body.dark-mode .submit-btn { background-color: var(--primary); color: #0F172A; }
 .color-picker-wrapper {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     background: var(--card-bg);
-    padding: 5px 12px;
+    padding: 8px 12px;
     border-radius: 10px;
     border: 1px solid var(--border);
 }
 
-.color-picker-wrapper label { font-size: 0.7rem; font-weight: bold; }
+.color-picker-wrapper label { font-size: 0.8rem; font-weight: bold; color: var(--text); }
 
-#taskColor {
-    border: none;
-    width: 25px;
-    height: 25px;
+.custom-color-palette {
+    display: flex;
+    gap: 8px;
+}
+
+.color-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
     cursor: pointer;
-    background: none;
-    padding: 0;
+    border: 2px solid transparent;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.color-dot:hover {
+    transform: scale(1.1);
+}
+
+.color-dot.active {
+    transform: scale(1.2);
+    border-color: var(--text);
 }
 
 .calendar-markers {
@@ -854,6 +870,80 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 .toast.show { transform: translateX(-50%) translateY(0); }
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 4000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--surface);
+    padding: 30px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: var(--text);
+    font-size: 1.4rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.modal-actions button {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95;
+}
+
+.btn-cancel {
+    background: var(--border);
+    color: var(--text);
+}
+
+.btn-cancel:hover {
+    background: var(--text-light);
+    color: var(--surface);
+    transform: translateY(-2px);
+}
+
+.btn-save {
+    background: var(--primary);
+    color: #0F172A;
+}
+
+.btn-save:hover {
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.4);
+    transform: translateY(-2px);
+}
 
 @media(max-width:700px){
    .nav-links { 

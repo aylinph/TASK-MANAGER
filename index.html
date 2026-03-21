@@ -116,7 +116,15 @@
                                        <input type="date" id="deadlineInput" title="Set a deadline" />
                                        <div class="color-picker-wrapper">
                                            <label>Priority:</label>
-                                           <input type="color" id="taskColor" value="#FACC15">
+                                           <div class="custom-color-palette" id="addTaskColors">
+                                               <div class="color-dot active" data-color="#FACC15" style="background-color: #FACC15;"></div>
+                                               <div class="color-dot" data-color="#EF4444" style="background-color: #EF4444;"></div>
+                                               <div class="color-dot" data-color="#F97316" style="background-color: #F97316;"></div>
+                                               <div class="color-dot" data-color="#22C55E" style="background-color: #22C55E;"></div>
+                                               <div class="color-dot" data-color="#3B82F6" style="background-color: #3B82F6;"></div>
+                                               <div class="color-dot" data-color="#A855F7" style="background-color: #A855F7;"></div>
+                                               <div class="color-dot" data-color="#EC4899" style="background-color: #EC4899;"></div>
+                                           </div>
                                        </div>
                                        <button id="addTaskBtn">Add</button>
                                    </div>
@@ -230,6 +238,33 @@
             </div>
        </section>
    </main>
+
+   <div id="editModal" class="modal-overlay">
+       <div class="modal-content">
+           <h3>Edit Task</h3>
+           <div class="task-input-group" style="margin-bottom: 0;">
+               <input type="text" id="editTaskInput" placeholder="Task name..." />
+               <input type="text" id="editAssigneeInput" placeholder="Who?" />
+               <input type="date" id="editDeadlineInput" />
+               <div class="color-picker-wrapper" style="margin-top: 10px;">
+                   <label>Priority:</label>
+                   <div class="custom-color-palette" id="editTaskColors">
+                       <div class="color-dot" data-color="#FACC15" style="background-color: #FACC15;"></div>
+                       <div class="color-dot" data-color="#EF4444" style="background-color: #EF4444;"></div>
+                       <div class="color-dot" data-color="#F97316" style="background-color: #F97316;"></div>
+                       <div class="color-dot" data-color="#22C55E" style="background-color: #22C55E;"></div>
+                       <div class="color-dot" data-color="#3B82F6" style="background-color: #3B82F6;"></div>
+                       <div class="color-dot" data-color="#A855F7" style="background-color: #A855F7;"></div>
+                       <div class="color-dot" data-color="#EC4899" style="background-color: #EC4899;"></div>
+                   </div>
+               </div>
+           </div>
+           <div class="modal-actions">
+               <button id="cancelEditBtn" class="btn-cancel">Cancel</button>
+               <button id="saveEditBtn" class="btn-save" style="background: var(--primary); color: #0F172A; border: none; border-radius: 8px; padding: 8px 16px; font-weight: bold; cursor: pointer;">Save Changes</button>
+           </div>
+       </div>
+   </div>
 
    <script src="script.js"></script>
    <div id="toast" class="toast"></div>

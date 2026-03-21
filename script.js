@@ -69,9 +69,30 @@ document.addEventListener('DOMContentLoaded', function(){
    const taskInput = document.getElementById('taskInput');
    const assigneeInput = document.getElementById('assigneeInput');
    const deadlineInput = document.getElementById('deadlineInput');
-   const taskColor = document.getElementById('taskColor');
    const addTaskBtn = document.getElementById('addTaskBtn');
    const taskList = document.getElementById('taskList');
+
+   let selectedAddColor = '#FACC15';
+   let selectedEditColor = '#FACC15';
+   let currentEditIndex = -1;
+
+   const addColorDots = document.querySelectorAll('#addTaskColors .color-dot');
+   addColorDots.forEach(dot => {
+       dot.addEventListener('click', function() {
+           addColorDots.forEach(d => d.classList.remove('active'));
+           this.classList.add('active');
+           selectedAddColor = this.getAttribute('data-color');
+       });
+   });
+
+   const editColorDots = document.querySelectorAll('#editTaskColors .color-dot');
+   editColorDots.forEach(dot => {
+       dot.addEventListener('click', function() {
+           editColorDots.forEach(d => d.classList.remove('active'));
+           this.classList.add('active');
+           selectedEditColor = this.getAttribute('data-color');
+       });
+   });
 
    function updateProgress() {
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -226,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
            li.innerHTML = `<span class="${textClass}">${task.text} ${assigneeHtml} ${deadlineHtml}</span>
                            <div>
-                               <button class="edit-btn" onclick="editTask(${index})">Edit</button>
+                               <button class="edit-btn" onclick="openEditModal(${index})">Edit</button>
                                <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
                                <button class="${btnClass}" onclick="finishTask(${index})">${btnText}</button>
                            </div>`;
@@ -250,7 +271,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
        const assigneeValue = assigneeInput ? assigneeInput.value.trim() : '';
        const deadlineValue = deadlineInput ? deadlineInput.value : '';
-       const colorValue = taskColor ? taskColor.value : '#FACC15';
 
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
@@ -259,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function(){
            completed: false,
            assignee: assigneeValue,
            deadline: deadlineValue,
-           color: colorValue
+           color: selectedAddColor
        });
 
        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -267,36 +287,78 @@ document.addEventListener('DOMContentLoaded', function(){
        taskInput.value = '';
        if(assigneeInput) assigneeInput.value = '';
        if(deadlineInput) deadlineInput.value = '';
+       
+       addColorDots.forEach(d => d.classList.remove('active'));
+       addColorDots[0].classList.add('active');
+       selectedAddColor = '#FACC15';
 
        showToast("Task added successfully.");
        loadTasks();
    }
 
-   window.editTask = function(index){
+   const editModal = document.getElementById('editModal');
+   const editTaskInput = document.getElementById('editTaskInput');
+   const editAssigneeInput = document.getElementById('editAssigneeInput');
+   const editDeadlineInput = document.getElementById('editDeadlineInput');
+   const saveEditBtn = document.getElementById('saveEditBtn');
+   const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+   window.openEditModal = function(index){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
        const currentTask = tasks[index];
-       const currentText = typeof currentTask === 'string' ? currentTask : currentTask.text;
-       const currentAssignee = currentTask.assignee || '';
-       const currentDeadline = currentTask.deadline || '';
+       
+       currentEditIndex = index;
+       editTaskInput.value = typeof currentTask === 'string' ? currentTask : currentTask.text;
+       editAssigneeInput.value = currentTask.assignee || '';
+       editDeadlineInput.value = currentTask.deadline || '';
+       
+       selectedEditColor = currentTask.color || '#FACC15';
+       editColorDots.forEach(d => {
+           d.classList.remove('active');
+           if (d.getAttribute('data-color') === selectedEditColor) {
+               d.classList.add('active');
+           }
+       });
 
-       const updatedTask = prompt("Edit your task:", currentText);
+       editModal.style.display = 'flex';
+   };
 
-       if(updatedTask !== null && updatedTask.trim() !== ""){
-           const updatedAssignee = prompt("Edit the person responsible:", currentAssignee);
-           const updatedDeadline = prompt("Edit the deadline (YYYY-MM-DD):", currentDeadline);
+   if(cancelEditBtn) {
+       cancelEditBtn.addEventListener('click', () => {
+           editModal.style.display = 'none';
+           currentEditIndex = -1;
+       });
+   }
 
-           tasks[index] = {
-               text: updatedTask.trim(),
+   if(saveEditBtn) {
+       saveEditBtn.addEventListener('click', () => {
+           if(currentEditIndex === -1) return;
+           
+           const updatedText = editTaskInput.value.trim();
+           if(updatedText === "") {
+               showToast("Task name cannot be empty.");
+               return;
+           }
+
+           const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+           const currentTask = tasks[currentEditIndex];
+
+           tasks[currentEditIndex] = {
+               text: updatedText,
                completed: currentTask.completed || false,
-               assignee: updatedAssignee !== null ? updatedAssignee.trim() : currentAssignee,
-               deadline: updatedDeadline !== null ? updatedDeadline.trim() : currentDeadline,
-               color: currentTask.color || '#FACC15'
+               assignee: editAssigneeInput.value.trim(),
+               deadline: editDeadlineInput.value,
+               color: selectedEditColor
            };
+
            localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+           editModal.style.display = 'none';
+           currentEditIndex = -1;
+           
            showToast("Task updated.");
            loadTasks();
-       }
-   };
+       });
+   }
 
    window.deleteTask = function(index){
        const tasks = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
