@@ -73,7 +73,14 @@ body.dark-mode .app-info-header h3 {
 }
 
 .nav-left { display: flex; align-items: center; gap: 15px; }
-.logo img { height: 40px; }
+.logo img { 
+    height: 40px;
+    filter: invert(1);
+}
+
+body.dark-mode .logo img {
+    filter: none;
+}
 .site-name h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--text); }
 
 .nav-links ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; }
