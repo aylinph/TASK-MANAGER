@@ -2,6 +2,8 @@
 
 A lightweight, distraction-free web application to capture goals, manage tasks, and get things done. Created by **Khánh Linh**.
 
+HOSTED ON NETLIFY: https://task-tracker-algo-khanhlinh.netlify.app/
+
 ## Features
 
 * **Task Manager:** Quickly add, edit, and delete tasks. Set assignees, deadlines, and color-coded priorities. Track your overall completion progress.
